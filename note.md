@@ -194,17 +194,53 @@ output : 번들링이 끝난 후의 파일 경로. 파일경로(path), 이름 �
 
 loader : 빌드할 때 파일간의 관계 파악할 때(웹팩으로 웹 서비스를 변환할 때) 자바스크립트가 아닌 파일들의 변환을 도와주는 속성 
 
+------------------------------------
+
+webpack 명령어 쳤을 때 로그 보는 법 
+특정 빌드마다 고유 hash 생김
+Asset chunk 
+모듈의 해석 순서대로 번들링한 순서 나옴.
+
+loader : js 파일이 아닌 파일을 웹팩 안으로 변환할 수 있게 적용해주는 속성,도구
+
+webpack.config.js 파일 다시 분석 
+mode : production, development, none ( 배포할 때는 꼭 production으로..)
+entry : 진입점
+output : 결과물 파일 (chunckhash : 고유값 가지고 번들링된 파일 넘버링 유용)
 
 
+module 속 rules 밑 배열에 들어가는 것들이 하나의 로더 규칙. 배열 형태로 로더 규칙들이 들어가는 문법. 
 
+ex) 모든 css 파일에 style-loader와 css-loader를 사용하겠다는 문법.
+module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
+  },
 
+--> 이게 없으면 error가 발생을 함.
+    base.css를 웹팩으로 돌리려고 하는데, js 파일이 아니기때문에 돌릴 수 없어서 에러 발생. -> loader 설정해주라고 hint. 이대로는 해석이 불가능하기 때문에. 
+    css-loader만 use해도 에러는 나지 않음. 웹팩에서 css 인식가능하게 됨. 하지만 해당 스타일이 반영,적용은 되지 않음. style-loader use하지 않기 떄문에 
 
+    use: ['css-loader', 'style-loader'] 로 순서를 반대로 하면 에러가 뜸! 
 
-
-
-
-
-
+    왜? : style-loader의 역할 때문 
+        style-loader의 역할 : 웹팩안에 들어간 스타일 코드를 ( css-loader를 통해) head안에 inline 스타일로 박아주는 것!
+        ex)
+        <head>
+            <meta charset="utf-8">
+            <title>CSS &amp; Libraries Code Splitting</title>
+                <style>
+                p {
+                    color : blue;
+                }
+                </style>
+        </head>
+        따라서 css-loader를 통해 웹팩으로 적용해주는 속성 로더 먼저 해준 후, 적용 가능한 style-loader를 통해 적용하면 정상 처리됨.
+        로더의 순서 연관 있음. 오른쪽에서 왼쪽으로 적용이 됨. 
 
 
 
